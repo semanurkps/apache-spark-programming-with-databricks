@@ -54,9 +54,11 @@ display(df)
 # COMMAND ----------
 
 # TODO
+from pyspark.sql import Row
+from pyspark.sql.functions import *
 
-traffic_df = (df.FILL_IN
-)
+traffic_df = df.groupBy("traffic_source").agg(round(sum("revenue"),1).alias("total_rev"),
+                                             avg("revenue").alias("avg_rev"))
 
 display(traffic_df)
 
@@ -84,7 +86,7 @@ print("All test pass")
 # COMMAND ----------
 
 # TODO
-top_traffic_df = (traffic_df.FILL_IN
+top_traffic_df = (traffic_df.orderBy(col("total_rev").desc()).limit(3)
 )
 display(top_traffic_df)
 
@@ -111,7 +113,8 @@ print("All test pass")
 # COMMAND ----------
 
 # TODO
-final_df = (top_traffic_df.FILL_IN
+final_df = (top_traffic_df.withColumn("avg_rev", round(col("avg_rev"),2))\
+                          .withColumn("total_rev", round(col("total_rev"),2))\
 )
 
 display(final_df)
@@ -122,7 +125,7 @@ display(final_df)
 
 # COMMAND ----------
 
-expected3 = [(78800000.29, 983.29), (47218429.0, 1086.83), (24797837.0, 1076.62)]
+expected3 = [(78800000.30, 983.29), (47218429.0, 1086.83), (24797837.0, 1076.62)]
 result3 = [(row.total_rev, row.avg_rev) for row in final_df.collect()]
 
 assert(expected3 == result3)
@@ -136,7 +139,7 @@ print("All test pass")
 
 # COMMAND ----------
 
-# TODO
+# TODO => already used this way for prev exercise
 bonus_df = (top_traffic_df.FILL_IN
 )
 
@@ -161,7 +164,11 @@ print("All test pass")
 # COMMAND ----------
 
 # TODO
-chain_df = (df.FILL_IN
+chain_df = (df.groupBy("traffic_source").agg(round(sum("revenue"),1).alias("total_rev"),
+                                             avg("revenue").alias("avg_rev"))\
+                  .orderBy(col("total_rev").desc()).limit(3)\
+            .withColumn("avg_rev", round(col("avg_rev"),2))\
+                          .withColumn("total_rev", round(col("total_rev"),2))\
 )
 
 display(chain_df)
