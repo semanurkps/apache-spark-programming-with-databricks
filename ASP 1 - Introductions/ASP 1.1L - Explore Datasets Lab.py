@@ -35,7 +35,7 @@
 
 # COMMAND ----------
 
-# <FILL_IN>
+# MAGIC %fs ls dbfs:/mnt/dbacademy-users/
 
 # COMMAND ----------
 
@@ -47,8 +47,16 @@
 
 # COMMAND ----------
 
+dbutils.help()
+
+# COMMAND ----------
+
+dbutils.fs.help()
+
+# COMMAND ----------
+
 # TODO
-files = FILL_IN
+files = dbutils.fs.ls('dbfs:/mnt/dbacademy-users/')
 display(files)
 
 # COMMAND ----------
@@ -63,8 +71,35 @@ display(files)
 
 # COMMAND ----------
 
+spark.conf.set("practice_context_vars.users", DA.paths.users)
+
+# COMMAND ----------
+
 # MAGIC %sql
-# MAGIC -- TODO
+# MAGIC CREATE TABLE IF NOT EXISTS users
+# MAGIC USING DELTA
+# MAGIC OPTIONS (path = "${practice_context_vars.users}");
+
+# COMMAND ----------
+
+spark.conf.set("practice_context_vars.sales", DA.paths.sales)
+spark.conf.set("practice_context_vars.products", DA.paths.products)
+spark.conf.set("practice_context_vars.events", DA.paths.events)
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC CREATE TABLE IF NOT EXISTS sales
+# MAGIC USING DELTA
+# MAGIC OPTIONS (path = "${practice_context_vars.sales}");
+# MAGIC 
+# MAGIC CREATE TABLE IF NOT EXISTS products
+# MAGIC USING DELTA
+# MAGIC OPTIONS (path = "${practice_context_vars.products}");
+# MAGIC 
+# MAGIC CREATE TABLE IF NOT EXISTS events
+# MAGIC USING DELTA
+# MAGIC OPTIONS (path = "${practice_context_vars.events}");
 
 # COMMAND ----------
 
@@ -100,7 +135,7 @@ display(files)
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC -- TODO
+# MAGIC SELECT * FROM PRODUCTS 
 
 # COMMAND ----------
 
@@ -126,7 +161,7 @@ display(files)
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC -- TODO
+# MAGIC SELECT ROUND(AVG(purchase_revenue_in_usd),2) AS AVG_REVENUE_USD FROM SALES
 
 # COMMAND ----------
 
@@ -155,7 +190,7 @@ display(files)
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC -- TODO
+# MAGIC SELECT DISTINCT(EVENT_NAME) AS DISTINCT_EVENTS FROM EVENTS
 
 # COMMAND ----------
 
